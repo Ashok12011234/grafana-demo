@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  mynetwork:
+    name: mynetwork
+    driver: bridge
+
+services:
+  
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: mosip
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+      MYSQL_TCP_PORT: 3306
+    networks:
+      - mynetwork
+    expose:
+      - 3306:3306
+    volumes:
+      - ./queries.sql:/queries.sql
+    command: ["--init-file", "/queries.sql"]
+  
+  admin:    
+    image: adminer    
+    ports:      
+      - "8080:8080"
+    networks:
+      - mynetwork
+  
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - "3000:3000"
+    networks:
+      - mynetwork
